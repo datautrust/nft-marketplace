@@ -109,7 +109,7 @@ const Profile: NextPage = () => {
 
             {/* Details sidebar */}
             <aside className="hidden w-96 bg-white p-8 border-l border-gray-200 overflow-y-auto lg:block">
-/*true to false for now to force display*
+{/*true to false for now to force display*/}
             { activeNft &&
               <div className="pb-16 space-y-6">
                 <div>

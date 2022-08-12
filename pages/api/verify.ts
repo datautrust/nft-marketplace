@@ -2,22 +2,65 @@
 import { v4 as uuidv4 } from "uuid";  //to generate random id
 import { Session } from "next-iron-session";
 import { NextApiRequest, NextApiResponse } from "next";
-import { withSession, contractAddress } from "./utils";
+import { withSession, contractAddress,addressCheckMiddleware } from "./utils";
+import { pinataApiKey, pinataSecretApiKey } from "./utils"; //ex 23.114
+
+import { NftMeta } from "@_types/nft";
+import axios from "axios";
 
 export default withSession(async (req: NextApiRequest & {session: Session}, res: NextApiResponse) => {
-  if (req.method === "GET") {
-    console.log("testing--in pages/api/verify");
+ 
+//ex 22.110 modify to include the POST
+if (req.method === "POST") {
+  try {
+    const {body} = req;  //could also write const body = req.body
+    const nft = body.nft as NftMeta
+//could add check for !nft.image
+    if (!nft.name || !nft.description || !nft.attributes) {
+      return res.status(422).send({message: "Some of the form data are missing!"});
+    }
+
+//ex 22.111 Get session back.
+// check addressCheckMiddleware(req,res);
+await addressCheckMiddleware(req,res);
+
+
+// 23.114 upload metadata to pinata
+// need to get the pinata keys
+const jsonRes = await axios.post("https://api.pinata.cloud/pinning/pinJSONToIPFS", {
+        pinataMetadata: {
+          name: uuidv4()  // we could put anything here "my custom"+ new Date()
+          },
+        pinataContent: nft
+      }, {
+        headers: {
+          pinata_api_key: pinataApiKey,
+          pinata_secret_api_key: pinataSecretApiKey
+        }
+      });
+
+      return res.status(200).send(jsonRes.data);
+
+ // ex 22.111   return res.status(200).send({message: "Nft has been created"});
+  
+
+
+} catch {
+    return res.status(422).send({message: "Cannot create JSON"});
+  } 
+} else if (req.method === "GET") { 
+     console.log("testing--in pages/api/verify");
     try {
       const message = { contractAddress, id: uuidv4() };
       req.session.set("message-session", message);
       await req.session.save();
       console.log(req.session.get("message-session"));
 
-      res.json(message);
+      return res.json(message);
     } catch {
-      res.status(422).send({message: "Cannot generate a message!"});
+      return res.status(422).send({message: "Cannot generate a message!"});
     }   
   } else {
-    res.status(200).json({message: "Invalid api route"});
+    return res.status(200).json({message: "Invalid api route"});
   }
 }) 

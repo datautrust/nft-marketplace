@@ -1,7 +1,7 @@
 export type Trait = "attack" | "health" | "speed";
 
 
-export type NftAttribute {
+export type NftAttribute = {
     trait_type: Trait;
     value: string;
 
@@ -23,3 +23,15 @@ export type NftCore ={
   export type Nft = {
     meta: NftMeta
   } & NftCore
+
+  export type FileReq ={
+  bytes : Uint8Array;
+  fileName :string;
+  contentType : string;
+  }
+  export type PinataRes = {
+    IpfsHash: string;
+    PinSize: number;
+    Timestamp: string;
+    isDuplicate: boolean;
+  } 

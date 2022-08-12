@@ -18,7 +18,7 @@ type UseNetworkResponse = {
    isLoading : boolean;
    isSupported : boolean;
    targetNetwork : string;
- 
+   isConnectedToNetwork: boolean;  
 }
 
 
@@ -41,15 +41,16 @@ export const hookFactory : NetworkHookFactory = ({provider,isLoading}) => () => 
       revalidateOnFocus: false
     }
    )
-
-   
+//ex 25.126 wrong network message
+const isSupported = data === targetNetwork;
 //debugger;
    return {
       ...swr,
       data,
       isValidating,
       targetNetwork,
-      isSupported: data === targetNetwork,
+      isSupported,
+      isConnectedToNetwork: !isLoading && isSupported,
       isLoading : isLoading as boolean,
      
    };

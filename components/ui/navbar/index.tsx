@@ -35,7 +35,7 @@ export default function Navbar() {
     <Disclosure as="nav" className="bg-gray-800">
       {({ open }) => (
         <>
-        //this is for debugging to show on banner. remove code
+        {/*this is for debugging to show on banner. remove code */}
           {account.data}
 
           <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
